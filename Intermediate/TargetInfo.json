@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "LSystems",
+			"Path": "C:\\Users\\suare\\Documents\\Unreal Projects\\LSystems\\Source\\LSystems.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "LSystemsEditor",
+			"Path": "C:\\Users\\suare\\Documents\\Unreal Projects\\LSystems\\Source\\LSystemsEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}
