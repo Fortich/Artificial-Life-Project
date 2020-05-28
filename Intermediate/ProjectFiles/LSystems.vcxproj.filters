@@ -3,7 +3,7 @@
   <ItemGroup>
     <None Include="..\..\LSystems.uproject" />
     <Filter Include="Source">
-      <UniqueIdentifier>{79EAEF89-EBC5-4CF2-9B00-B19539D03ED0}</UniqueIdentifier>
+      <UniqueIdentifier>{E4161BBE-EF21-484C-B361-F4D4983EEF76}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\LSystems.Target.cs">
       <Filter>Source</Filter>
@@ -11,8 +11,10 @@
     <None Include="..\..\Source\LSystemsEditor.Target.cs">
       <Filter>Source</Filter>
     </None>
+    <None Include="..\..\.gitattributes" />
+    <None Include="..\..\.gitignore" />
     <Filter Include="Config">
-      <UniqueIdentifier>{55EB2C3D-2CC9-430F-96B9-9715EDA05C9E}</UniqueIdentifier>
+      <UniqueIdentifier>{D3B394E8-F1A6-4F47-88DD-1AC96E436BD2}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Config\DefaultEditor.ini">
       <Filter>Config</Filter>
@@ -24,7 +26,7 @@
       <Filter>Config</Filter>
     </None>
     <Filter Include="Source\LSystems">
-      <UniqueIdentifier>{8340E956-3DC1-409F-9D70-FB31510ADC3E}</UniqueIdentifier>
+      <UniqueIdentifier>{A4FC2701-A797-4D51-8D14-46B862625923}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\LSystems\LSystems.Build.cs">
       <Filter>Source\LSystems</Filter>
@@ -45,6 +47,24 @@
       <Filter>Source\LSystems</Filter>
     </ClCompile>
     <ClInclude Include="..\..\Source\LSystems\plant.h">
+      <Filter>Source\LSystems</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\LSystems\Predator.cpp">
+      <Filter>Source\LSystems</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\LSystems\Predator.h">
+      <Filter>Source\LSystems</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\LSystems\PredatorPawn.cpp">
+      <Filter>Source\LSystems</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\LSystems\PredatorPawn.h">
+      <Filter>Source\LSystems</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\LSystems\Wolf.cpp">
+      <Filter>Source\LSystems</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\LSystems\Wolf.h">
       <Filter>Source\LSystems</Filter>
     </ClInclude>
   </ItemGroup>
