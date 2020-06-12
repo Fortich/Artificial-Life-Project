@@ -1,0 +1,22 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-LSystems-0087.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\LSystemsEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Development\LSystems\LSystems.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Development\LSystems\LSystemsGameModeBase.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Development\LSystems\plant.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Development\LSystems\PredatorPawn.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Development\LSystems\WorldManager.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Development\LSystems\LSystems.init.gen.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Development\LSystems\LSystemsGameModeBase.gen.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Development\LSystems\plant.gen.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Development\LSystems\PredatorPawn.gen.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Development\LSystems\WorldManager.gen.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Development\LSystems\Default.rc2.res"
+/OUT:"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Development\LSystems\UE4Editor-LSystems-0087.lib"
+/INCLUDE:IMPLEMENT_MODULE_LSystems

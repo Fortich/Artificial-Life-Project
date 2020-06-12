@@ -27,4 +27,19 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	int size_tree;
+
+public:
+	FColor color;
+	void setLocation(FVector location);
+	FVector getLocation();
+	void setColor(FColor color);
+	void setSize(int size);
+	int  getSize();
+	void draw();
+
+public:
+	std::vector<std::vector<double>> tree;
+	FVector location;
+	
 };

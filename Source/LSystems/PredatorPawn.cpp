@@ -13,6 +13,10 @@
 #include "Materials/MaterialExpressionTextureCoordinate.h"
 #include "Materials/MaterialExpressionScalarParameter.h"
 #include "AssetRegistryModule.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Animation/AnimSequence.h"
+#include "Kismet/GameplayStatics.h"
+#include "plant.h"
 #include <string>
 #include <stdlib.h>
 
@@ -23,7 +27,7 @@ APredatorPawn::APredatorPawn()
 	
 	PrimaryActorTick.bCanEverTick = true;
 
-	USkeletalMesh *usm = LoadObject<USkeletalMesh>(this, TEXT("SkeletalMesh'/Game/AnimalVarietyPack/DeerStagAndDoe/Meshes/SK_DeerDoe.SK_DeerDoe'"), NULL, LOAD_None, NULL);
+	USkeletalMesh *usm = LoadObject<USkeletalMesh>(this, TEXT("SkeletalMesh'/Game/AnimalVarietyPack/DeerStagAndDoe/Meshes/SK_DeerDoe.SK_DeerDoe'"));
 
 	MyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("My Mesh"));
 	MyMesh->SetSkeletalMesh(usm);
@@ -35,9 +39,9 @@ APredatorPawn::APredatorPawn()
 	MyBoxComponent->SetCollisionProfileName("Trigger");
 	MyBoxComponent->SetupAttachment(RootComponent);
 
-	Material = CreateDefaultSubobject<UMaterial>(TEXT("OnMaterial"));
+	theTexture = APredatorPawn::LoadTexture(64, 0.35, 3.0, 3.0, 6.0, 6.0);
 
-	UTexture2D* theTexture = APredatorPawn::LoadTexture(64, 0.35, 3.0, 3.0, 6.0, 6.0);
+	Material = CreateDefaultSubobject<UMaterial>(TEXT("OnMaterial"));
 
 	UMaterialExpressionMultiply* Multiply = NewObject<UMaterialExpressionMultiply>(Material);
 	Material->Expressions.Add(Multiply);
@@ -63,10 +67,26 @@ APredatorPawn::APredatorPawn()
 	YParam->DefaultValue = 1;
 	Append->A.Expression = XParam;
 	Append->B.Expression = YParam;
-	Material->PreEditChange(NULL);
-	Material->PostEditChange();
-	MyMesh->SetMaterial(1, Material);
 	MyMesh->SetMaterial(0, Material);
+	MyMesh->SetMaterial(1, Material);
+
+	walking_anim = LoadObject<UAnimSequence>(this, TEXT("AnimSequence'/Game/AnimalVarietyPack/DeerStagAndDoe/Animations/ANIM_DeerDoe_Walk.ANIM_DeerDoe_Walk'"));
+	eating_anim = LoadObject<UAnimSequence>(this, TEXT("AnimSequence'/Game/AnimalVarietyPack/DeerStagAndDoe/Animations/ANIM_DeerDoe_GrazeOnce.ANIM_DeerDoe_GrazeOnce'"));
+	dying_anim = LoadObject<UAnimSequence>(this, TEXT("AnimSequence'/Game/AnimalVarietyPack/DeerStagAndDoe/Animations/ANIM_DeerDoe_Death.ANIM_DeerDoe_Death'"));
+	walking_anim->RateScale = 0.68;
+}
+
+// Called when the game starts or when spawned
+void APredatorPawn::BeginPlay()
+{
+	Super::BeginPlay();
+
+	MyMesh->PlayAnimation(walking_anim, true);
+	alive = true;
+	energy = 100;
+	time = 0;
+	dtime = 0;
+	etime = 0;
 }
 
 bool APredatorPawn::is_inside_ellipse(float h, float k, float x, float y, float a, float b) {
@@ -177,53 +197,102 @@ UTexture2D* APredatorPawn::LoadTexture(int size, float ratio, float inner_range_
 	return NewTexture;
 }
 
-// Called when the game starts or when spawned
-void APredatorPawn::BeginPlay()
-{
-	Super::BeginPlay();
-}
 
 // Called every frame
 void APredatorPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	FVector avgPos = { 0,0,0 };
-	FVector sepPos = { 0,0,0 };
-	FRotator avgAlig = { 0,0,0 };
-	int n = 0;
-	int m = 0;
-	for (FConstPawnIterator Itr = GetWorld()->GetPawnIterator(); Itr; ++Itr)
-	{
-		if (Itr->Get()->IsA(APredatorPawn::StaticClass()))
+	if (eating) {
+		etime += DeltaTime;
+		if (etime > 4) {
+			etime = 0;
+			eating = false;
+			MyMesh->PlayAnimation(walking_anim, true);
+		}
+	} else if (alive) {
+		FVector avgPos = { 0,0,0 };
+		FVector sepPos = { 0,0,0 };
+		FVector neartestplantposition = { 0,0,0 };
+		Aplant* neartestplant = nullptr;
+		float neartestdistanceplant = 100000000;
+		float maxdistance = 10000;
+		FRotator avgAlig = { 0,0,0 };
+		int n = 0;
+		int m = 0;
+		int seen_plants = 0;
+		for (FConstPawnIterator Itr = GetWorld()->GetPawnIterator(); Itr; ++Itr)
 		{
-			if (FVector::Dist(Itr->Get()->GetActorLocation(), GetActorLocation()) <= 500) {
-				avgPos += Itr->Get()->GetActorLocation();
-				avgAlig += Itr->Get()->GetActorRotation();
-				n++;
-			}
-			if (FVector::Dist(Itr->Get()->GetActorLocation(), GetActorLocation()) < 200) {
-				sepPos += Itr->Get()->GetActorLocation();
-				m++;
+			if (Itr->Get()->IsA(APredatorPawn::StaticClass()))
+			{
+				if (FVector::Dist(Itr->Get()->GetActorLocation(), GetActorLocation()) <= 2000) {
+					avgPos += Itr->Get()->GetActorLocation();
+					avgAlig += Itr->Get()->GetActorRotation();
+					n++;
+				}
+				if (FVector::Dist(Itr->Get()->GetActorLocation(), GetActorLocation()) < 250) {
+					sepPos += Itr->Get()->GetActorLocation();
+					m++;
+				}
 			}
 		}
-	}
-	avgPos *= 1.0/n;
-	sepPos *= 1.0/m;
-	avgAlig *= 1.0/n;
-	
-	FRotator NewRotation = GetActorRotation();
-	NewRotation += (DeltaTime * 0.5 * (avgAlig - NewRotation));
-	SetActorRotation(NewRotation);
-	
+		TArray<AActor*> FoundActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), Aplant::StaticClass(), FoundActors);
+		
 
-	FVector NewLocation = GetActorLocation();
-	NewLocation += (DeltaTime * 0.001 * (avgPos - NewLocation)); //Cohesion
-	NewLocation -= (DeltaTime * 0.01 * (sepPos - NewLocation)); //Separation
-	NewLocation += (DeltaTime * 50 * GetActorForwardVector().RotateAngleAxis(90, {0,0,1})); //Going forward
-	FVector deltaLocation = GetActorLocation() - NewLocation;
-	SetActorLocation(NewLocation);
-	SetActorRotation(deltaLocation.RotateAngleAxis(90, { 0,0,1 }).Rotation());
+		for (int i = 0; i < FoundActors.Num(); i++) {
+			if (((Aplant*)FoundActors[i])->getSize() > 0) {
+				if (FVector::Dist(((Aplant*)FoundActors[i])->getLocation(), GetActorLocation()) < neartestdistanceplant) {
+					neartestplantposition = ((Aplant*)FoundActors[i])->getLocation();
+					neartestdistanceplant = FVector::Dist(((Aplant*)FoundActors[i])->getLocation(), GetActorLocation());
+					neartestplant = ((Aplant*)FoundActors[i]);
+				}
+			}
+		}
+
+		if (neartestdistanceplant < 100 && energy < 200) {
+			neartestplant->setSize(neartestplant->getSize() - 1);	//Going to eat
+			MyMesh->PlayAnimation(eating_anim, false);
+			energy += 49;
+			eating = true;
+		}
+
+		avgPos *= 1.0 / n;
+		sepPos *= 1.0 / m;
+		avgAlig *= 1.0 / n;
+
+
+		FRotator NewRotation = GetActorRotation();
+		NewRotation += (DeltaTime * 0.5 * (avgAlig - NewRotation));
+		SetActorRotation(NewRotation);
+
+		FVector NewLocation = GetActorLocation();
+		NewLocation += (DeltaTime * 0.3 * (avgPos - GetActorLocation()).GetSafeNormal()); //Cohesion
+		NewLocation -= (DeltaTime * 0.9 * (sepPos - GetActorLocation()).GetSafeNormal()); //Separation
+		if (neartestdistanceplant < maxdistance && energy < 200) {
+			NewLocation += (DeltaTime * 1 * (neartestplantposition - GetActorLocation()).GetSafeNormal()); //Going to plants
+		}
+		NewLocation += (DeltaTime * 45 * GetActorForwardVector().RotateAngleAxis(90, { 0,0,1 })); //Going forward
+		FVector deltaLocation = GetActorLocation() - NewLocation;
+		SetActorLocation(NewLocation);
+		SetActorRotation(deltaLocation.RotateAngleAxis(90, { 0,0,1 }).Rotation());
+		time += DeltaTime;
+		if (time > 1) {
+			energy--;
+			time = 0;
+		}
+		if (energy == 0) {
+			MyMesh->PlayAnimation(dying_anim, false);
+			alive = false;
+		}
+
+
+	}
+	else {
+		dtime += DeltaTime;
+		if (dtime > 10) {
+			this->Destroy();
+		}
+	}
 }
 
 // Called to bind functionality to input
