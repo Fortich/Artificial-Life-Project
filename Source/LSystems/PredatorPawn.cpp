@@ -18,6 +18,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "plant.h"
 #include <string>
+#include <bitset>
 #include <stdlib.h>
 
 // Sets default values
@@ -28,20 +29,135 @@ APredatorPawn::APredatorPawn()
 	PrimaryActorTick.bCanEverTick = true;
 
 	USkeletalMesh *usm = LoadObject<USkeletalMesh>(this, TEXT("SkeletalMesh'/Game/AnimalVarietyPack/DeerStagAndDoe/Meshes/SK_DeerDoe.SK_DeerDoe'"));
-
 	MyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("My Mesh"));
 	MyMesh->SetSkeletalMesh(usm);
 	MyMesh->SetupAttachment(RootComponent);
 	RootComponent = MyMesh;
 
-	MyBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("My BoxComponent"));
-	MyBoxComponent->InitBoxExtent(FVector(100, 100, 100));
-	MyBoxComponent->SetCollisionProfileName("Trigger");
-	MyBoxComponent->SetupAttachment(RootComponent);
+	Material = CreateDefaultSubobject<UMaterial>(TEXT("Texture"));
+	MyMesh->SetMaterial(0, Material);
+	MyMesh->SetMaterial(1, Material);
 
-	theTexture = APredatorPawn::LoadTexture(64, 0.35, 3.0, 3.0, 6.0, 6.0);
+	attacked_anim = LoadObject<UAnimSequence>(this, TEXT("AnimSequence'/Game/AnimalVarietyPack/DeerStagAndDoe/Animations/ANIM_DeerDoe_GetHit.ANIM_DeerDoe_GetHit'"));
+	walking_anim = LoadObject<UAnimSequence>(this, TEXT("AnimSequence'/Game/AnimalVarietyPack/DeerStagAndDoe/Animations/ANIM_DeerDoe_Walk.ANIM_DeerDoe_Walk'"));
+	eating_anim = LoadObject<UAnimSequence>(this, TEXT("AnimSequence'/Game/AnimalVarietyPack/DeerStagAndDoe/Animations/ANIM_DeerDoe_GrazeOnce.ANIM_DeerDoe_GrazeOnce'"));
+	dying_anim = LoadObject<UAnimSequence>(this, TEXT("AnimSequence'/Game/AnimalVarietyPack/DeerStagAndDoe/Animations/ANIM_DeerDoe_Death.ANIM_DeerDoe_Death'"));
+	walking_anim->RateScale = 0.68;
+}
 
-	Material = CreateDefaultSubobject<UMaterial>(TEXT("OnMaterial"));
+std::bitset<256> APredatorPawn::GetGeneticCode() {
+	std::bitset<256> code;
+
+	int i = 255;
+	std::bitset<32> bitratio(*(int*)&gen_ratio);
+	for (; i > 223; i--) {
+		code[i] = bitratio[i-224];
+	}
+
+	std::bitset<32> bitirx(*(int*)&gen_irx);
+	for (; i > 191; i--) {
+		code[i] = bitirx[i - 192];
+	}
+
+	std::bitset<32> bitiry(*(int*)&gen_iry);
+	for (; i > 159; i--) {
+		code[i] = bitiry[i - 160];
+	}
+
+	std::bitset<32> bitorx(*(int*)&gen_orx);
+	for (; i > 127; i--) {
+		code[i] = bitorx[i - 128];
+	}
+
+	std::bitset<32> bitory(*(int*)&gen_ory);
+	for (; i > 95; i--) {
+		code[i] = bitory[i - 96];
+	}
+
+	std::bitset<32> bitsx(*(int*)&gen_sx);
+	for (; i > 63; i--) {
+		code[i] = bitsx[i - 64];
+	}
+
+	std::bitset<32> bitsy(*(int*)&gen_sy);
+	for (; i > 31; i--) {
+		code[i] = bitsy[i - 32];
+	}
+
+	std::bitset<32> bitsz(*(int*)&gen_sz);
+	for (; i > -1; i--) {
+		code[i] = bitsz[i];
+	}
+
+	return code;
+}
+
+void APredatorPawn::SetGeneticCode(std::bitset<256> code) {
+	int i = 255;
+
+	std::bitset<32> bitratio(*(int*)&gen_ratio);
+	for (; i > 223; i--) {
+		bitratio[i - 224] = code[i];
+	}
+	const auto bitratio_val = bitratio.to_ullong();
+	memcpy(&gen_ratio, &bitratio_val, sizeof(float));
+
+	std::bitset<32> bitirx(*(int*)&gen_irx);
+	for (; i > 191; i--) {
+		bitirx[i - 192] = code[i];
+	}
+	const auto bitirx_val = bitirx.to_ullong();
+	memcpy(&gen_irx, &bitirx_val, sizeof(float));
+
+	std::bitset<32> bitiry(*(int*)&gen_iry);
+	for (; i > 159; i--) {
+		bitiry[i - 160] = code[i];
+	}
+	const auto bitiry_val = bitiry.to_ullong();
+	memcpy(&gen_iry, &bitiry_val, sizeof(float));
+
+	std::bitset<32> bitorx(*(int*)&gen_orx);
+	for (; i > 127; i--) {
+		bitorx[i - 128] = code[i];
+	}
+	const auto bitorx_val = bitorx.to_ullong();
+	memcpy(&gen_orx, &bitorx_val, sizeof(float));
+
+	std::bitset<32> bitory(*(int*)&gen_ory);
+	for (; i > 95; i--) {
+		bitory[i - 96] = code[i];
+	}
+	const auto bitory_val = bitory.to_ullong();
+	memcpy(&gen_ory, &bitory_val, sizeof(float));
+
+	std::bitset<32> bitsx(*(int*)&gen_sx);
+	for (; i > 63; i--) {
+		bitsx[i - 64] = code[i];
+	}
+	const auto bitsx_val = bitsx.to_ullong();
+	memcpy(&gen_sx, &bitsx_val, sizeof(float));
+
+	std::bitset<32> bitsy(*(int*)&gen_sy);
+	for (; i > 31; i--) {
+		bitsy[i - 32] = code[i];
+	}
+	const auto bitsy_val = bitsy.to_ullong();
+	memcpy(&gen_sy, &bitsy_val, sizeof(float));
+
+	std::bitset<32> bitsz(*(int*)&gen_sz);
+	for (; i > -1; i--) {
+		bitsz[i] = code[i];
+	}
+	const auto bitsz_val = bitsz.to_ullong();
+	memcpy(&gen_sz, &bitsz_val, sizeof(float));
+
+	SetTexture();
+	SetScale();
+	return;
+}
+
+void APredatorPawn::SetTexture() {
+	theTexture = APredatorPawn::LoadTexture(64, gen_ratio, gen_irx, gen_iry, gen_orx, gen_ory);
 
 	UMaterialExpressionMultiply* Multiply = NewObject<UMaterialExpressionMultiply>(Material);
 	Material->Expressions.Add(Multiply);
@@ -59,21 +175,22 @@ APredatorPawn::APredatorPawn()
 	Multiply->A.Expression = TexCoords;
 	UMaterialExpressionScalarParameter* XParam = NewObject<UMaterialExpressionScalarParameter>(Material);
 	UMaterialExpressionScalarParameter* YParam = NewObject<UMaterialExpressionScalarParameter>(Material);
-	Material->Expressions.Add(XParam);
-	Material->Expressions.Add(YParam);
 	XParam->ParameterName = "TextureRepeatX";
 	XParam->DefaultValue = 1;
 	YParam->ParameterName = "TextureRepeatY";
 	YParam->DefaultValue = 1;
 	Append->A.Expression = XParam;
 	Append->B.Expression = YParam;
+
+	Material->PreEditChange(NULL);
+	Material->PostEditChange();
+	
 	MyMesh->SetMaterial(0, Material);
 	MyMesh->SetMaterial(1, Material);
+}
 
-	walking_anim = LoadObject<UAnimSequence>(this, TEXT("AnimSequence'/Game/AnimalVarietyPack/DeerStagAndDoe/Animations/ANIM_DeerDoe_Walk.ANIM_DeerDoe_Walk'"));
-	eating_anim = LoadObject<UAnimSequence>(this, TEXT("AnimSequence'/Game/AnimalVarietyPack/DeerStagAndDoe/Animations/ANIM_DeerDoe_GrazeOnce.ANIM_DeerDoe_GrazeOnce'"));
-	dying_anim = LoadObject<UAnimSequence>(this, TEXT("AnimSequence'/Game/AnimalVarietyPack/DeerStagAndDoe/Animations/ANIM_DeerDoe_Death.ANIM_DeerDoe_Death'"));
-	walking_anim->RateScale = 0.68;
+void APredatorPawn::SetScale() {
+	MyMesh->SetWorldScale3D(FVector(gen_sx, gen_sy, gen_sz));
 }
 
 // Called when the game starts or when spawned
@@ -81,8 +198,12 @@ void APredatorPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
+	std::bitset<256> genericcode("0011111010110011001100110011001101000000010000000000000000000000010000000100000000000000000000000100000011000000000000000000000001000000110000000000000000000000001111111000000000000000000000000011111110000000000000000000000000111111100000000000000000000000");
+	SetGeneticCode(genericcode);
+
 	MyMesh->PlayAnimation(walking_anim, true);
 	alive = true;
+	attacked = false;
 	energy = 100;
 	time = 0;
 	dtime = 0;
@@ -198,11 +319,29 @@ UTexture2D* APredatorPawn::LoadTexture(int size, float ratio, float inner_range_
 }
 
 
+void APredatorPawn::Attacked(int energy_dis) {
+	energy -= energy_dis;
+	attacked = true;
+	MyMesh->PlayAnimation(attacked_anim, false);
+}
+
+bool APredatorPawn::IsAlive() {
+	return alive;
+}
+
 // Called every frame
 void APredatorPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (eating) {
+
+	if (attacked) {
+		atime += DeltaTime;
+		if (atime > 0.75) {
+			atime = 0;
+			attacked = false;
+			MyMesh->PlayAnimation(walking_anim, true);
+		}
+	} else if (eating) {
 		etime += DeltaTime;
 		if (etime > 4) {
 			etime = 0;
@@ -280,12 +419,10 @@ void APredatorPawn::Tick(float DeltaTime)
 			energy--;
 			time = 0;
 		}
-		if (energy == 0) {
+		if (energy < 0) {
 			MyMesh->PlayAnimation(dying_anim, false);
 			alive = false;
 		}
-
-
 	}
 	else {
 		dtime += DeltaTime;

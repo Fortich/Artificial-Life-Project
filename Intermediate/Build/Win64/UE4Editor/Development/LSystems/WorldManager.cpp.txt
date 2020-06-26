@@ -20,3 +20,8 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\INCLUDE\cctype
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\math.h
 C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Inc\LSystems\plant.generated.h
+C:\Users\suare\Documents\Unreal Projects\LSystems\Source\LSystems\PredatorPawn.h
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.26.28801\INCLUDE\bitset
+C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Inc\LSystems\PredatorPawn.generated.h
+C:\Users\suare\Documents\Unreal Projects\LSystems\Source\LSystems\PredatorPredator.h
+C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\Inc\LSystems\PredatorPredator.generated.h

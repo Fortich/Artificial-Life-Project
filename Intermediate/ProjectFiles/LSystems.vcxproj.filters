@@ -62,4 +62,14 @@
       <Filter>Source\LSystems</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\LSystems\PredatorPredator.h">
+      <Filter>Source\LSystems</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\LSystems\PredatorPredator.cpp">
+      <Filter>Source\LSystems</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

@@ -2,9 +2,13 @@
 
 
 #include "WorldManager.h"
+#include <stdlib.h>
 #include "plant.h"
+#include "PredatorPawn.h"
+#include "PredatorPredator.h"
 #include "Engine/World.h"
 
+float time = 0;
 float time1 = 0;
 float time2 = 0;
 float time3 = 0;
@@ -13,6 +17,8 @@ float time4 = 0;
 Aplant* plant;
 int size = 25;
 std::vector<std::vector<Aplant*>> plants(size, std::vector<Aplant*>(size));
+std::vector<APredatorPredator*> predators;
+std::vector<APredatorPawn*> preys;
 // Sets default values
 AWorldManager::AWorldManager()
 {
@@ -33,6 +39,17 @@ void AWorldManager::BeginPlay()
 			plants[i][j]->setSize(0);
 			plants[i][j]->setLocation({ ((float)i)*380 - 4500, ((float)j) * 380 - 4500, 0});
 		}
+	}
+
+	for (int i = 0; i < size/10; i++) {
+		APredatorPredator* predator = GetWorld()->SpawnActor<APredatorPredator>();
+		predator->SetActorLocation({ ((float)(rand()%size)) * 250 - 4500, ((float)(rand() % size)) * 250 - 4500, 0 });
+		predators.push_back(predator);
+	}
+	for (int i = 0; i < 1; i++) {
+		APredatorPawn* prey = GetWorld()->SpawnActor<APredatorPawn>();
+		//prey->SetActorLocation({ ((float)(rand() % size)) * 250 - 4500, ((float)(rand() % size)) * 250 - 4500, 0 });
+		preys.push_back(prey);
 	}
 }
 
@@ -68,27 +85,33 @@ void AWorldManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+	time += DeltaTime;
 	time1 += DeltaTime;
 	time2 += DeltaTime;
 	time3 += DeltaTime;
 	time4 += DeltaTime;
+	if (time > 1) {
+
+
+		time = 0;
+	}
 	if (time1 > 5) {
-		plants[size - 5][size - 5]->setSize(plants[size - 5][size - 5]->getSize() + 1);
+		plants[size - 7][size - 7]->setSize(plants[size - 7][size - 7]->getSize() + 1);
 		correct();
 		time1 = 0;
 	}
 	if (time2 > 10) {
-		plants[5][5]->setSize(plants[5][5]->getSize() + 1);
+		plants[7][7]->setSize(plants[7][7]->getSize() + 1);
 		correct();
 		time2 = 0;
 	}
 	if (time3 > 15) {
-		plants[5][size-5]->setSize(plants[5][size-5]->getSize() + 1);
+		plants[7][size-7]->setSize(plants[7][size-7]->getSize() + 1);
 		correct();
 		time3 = 0;
 	}
 	if (time4 > 10) {
-		plants[size - 5][5]->setSize(plants[size - 5][5]->getSize() + 1);
+		plants[size - 7][7]->setSize(plants[size - 7][7]->getSize() + 1);
 		correct();
 		time4 = 0;
 	}

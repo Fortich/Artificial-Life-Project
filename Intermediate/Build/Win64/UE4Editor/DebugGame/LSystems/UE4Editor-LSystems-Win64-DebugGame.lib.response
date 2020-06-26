@@ -1,0 +1,24 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-LSystems-Win64-DebugGame.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\LSystemsEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\LSystems.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\LSystemsGameModeBase.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\plant.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\PredatorPawn.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\PredatorPredator.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\WorldManager.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\LSystems.init.gen.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\LSystemsGameModeBase.gen.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\plant.gen.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\PredatorPawn.gen.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\PredatorPredator.gen.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\WorldManager.gen.cpp.obj"
+"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\Default.rc2.res"
+/OUT:"C:\Users\suare\Documents\Unreal Projects\LSystems\Intermediate\Build\Win64\UE4Editor\DebugGame\LSystems\UE4Editor-LSystems-Win64-DebugGame.lib"
+/INCLUDE:IMPLEMENT_MODULE_LSystems
